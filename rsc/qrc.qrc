@@ -1,0 +1,36 @@
+<RCC>
+    <qresource prefix="/">
+        <file>picture/add.ico</file>
+        <file>picture/add.png</file>
+        <file>picture/cal_off.png</file>
+        <file>picture/cal_on.png</file>
+        <file>picture/diagnosis_off.png</file>
+        <file>picture/diagnosis_on.png</file>
+        <file>picture/em_off.png</file>
+        <file>picture/em_on.png</file>
+        <file>picture/filament_off.png</file>
+        <file>picture/filament_on.png</file>
+        <file>picture/leak_check_off.png</file>
+        <file>picture/leak_check_on.png</file>
+        <file>picture/monitor_off.png</file>
+        <file>picture/monitor_on.png</file>
+        <file>picture/recipe.png</file>
+        <file>picture/rga_offline.png</file>
+        <file>picture/rga_online.png</file>
+        <file>picture/search.ico</file>
+        <file>picture/search.png</file>
+        <file>picture/settings.png</file>
+        <file>picture/stopall.png</file>
+        <file>picture/timing.gif</file>
+        <file>qss/common.qss</file>
+        <file>qss/AMOLED.qss</file>
+        <file>qss/Aqua.qss</file>
+        <file>qss/ConsoleStyle.qss</file>
+        <file>qss/ElegantDark.qss</file>
+        <file>qss/linxon.qss</file>
+        <file>qss/ManjaroMix.qss</file>
+        <file>qss/MaterialDark.qss</file>
+        <file>qss/Ubuntu.qss</file>
+        <file>picture/start.png</file>
+    </qresource>
+</RCC>

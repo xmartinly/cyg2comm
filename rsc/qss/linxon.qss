@@ -1,0 +1,28 @@
+﻿QPushButton{
+border-style: outset;
+border-width: 2px;
+border-bottom-width: 1px;
+border-style: solid;
+padding: 2px;
+}
+QPushButton:hover{
+border-style: outset;
+border-width: 2px;
+border-bottom-width: 1px;
+border-style: solid;
+padding: 2px;
+}
+QPushButton:pressed{
+border-style: outset;
+border-width: 2px;
+border-bottom-width: 1px;
+border-style: solid;
+padding: 2px;
+}
+QPushButton:disabled{
+border-style: outset;
+border-width: 2px;
+border-bottom-width: 1px;
+border-style: solid;
+padding: 2px;
+}

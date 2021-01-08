@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/qss"/>
+    <qresource prefix="/icon"/>
+    <qresource prefix="/\qss"/>
+    <qresource prefix="/\icon"/>
+</RCC>

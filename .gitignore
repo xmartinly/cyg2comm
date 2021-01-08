@@ -1,0 +1,7 @@
+*.pro.user*
+*.autosave
+*.rc
+debug/
+release/
+Makefile*
+.qmake.stash
