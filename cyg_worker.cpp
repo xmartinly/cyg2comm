@@ -90,35 +90,40 @@ void CygWorker::run() {
 void CygWorker::recData() {
     bool b_read_ok = false;
     QString s_buffer;
-    QByteArray buffer = tfc_Socket->readAll();
+    QByteArray buffer = tfc_Socket->readAll(),
+               ba_version,
+               ba_pwr,
+               ba_trans,
+               ba_dac,
+               ba_thk;
     QStringList sl_buffer, sl_data_list;
     if(buffer.size() == 82) {
         b_read_ok = DataCompute::InficonTFCCheckSum(buffer.mid(2, 79)) == DataCompute::HexTodec(buffer.mid(81, 1).toHex().data());
         if(b_read_ok) {
-            s_buffer = buffer.mid(4, 77).toHex();
-            sl_buffer = s_buffer.split("06");
-            sl_buffer.removeAll(QString(""));
+            bool ok;
+            ba_version = buffer.mid(5, 22);
+            ba_pwr = buffer.mid(28, 24);
+            ba_thk = buffer.mid(53, 24);
+            ba_trans = buffer.mid(78, 1);
+            ba_dac = buffer.mid(80, 1);
+            sl_data_list << cyg_sn  // cygnus2 sn
+                         << cyg_ip  // cygnus2 IP
+                         << QDateTime::currentDateTime().toString("yyyy/MM/dd HH:mm:ss:z") // data time
+                         << ba_version.toStdString().c_str() // cygnus2 version
+                         << errMsg::transMsg(ba_trans.toInt(&ok, 16)) // trans message
+                         << QString::number(ba_dac.toInt(&ok, 16)); // dac error number
+            QString s_chs_pwr = ba_pwr.toHex(), s_chs_thk = ba_thk.toHex();
+            for(int i = 1; i < 7; i++) {
+                QString s_ch_pwr_hex = s_chs_pwr.mid((i - 1) * 8, 8),
+                        s_ch_thx_hex = s_chs_thk.mid((i - 1) * 8, 8),
+                        s_ch_pwr_value = QString::number(DataCompute::hexStrToFloat(s_ch_pwr_hex), 'd', 2),
+                        s_ch_thk_value = QString::number(DataCompute::hexStrToFloat(s_ch_thx_hex), 'd', 3);
+                sl_data_list << s_ch_pwr_value << s_ch_thk_value;
+            }
+            emit resultReady(sl_data_list);
         }
     } else {
         return;
-    }
-    if(b_read_ok) {
-        bool ok;
-        sl_data_list << cyg_sn  // cygnus2 sn
-                     << cyg_ip  // cygnus2 IP
-                     << QDateTime::currentDateTime().toString("yyyy/MM/dd HH:mm:ss:z") // data time
-                     << QByteArray::fromHex(sl_buffer[0].toUtf8().data()).toStdString().c_str() // cygnus2 version
-                     << errMsg::transMsg(sl_buffer.at(3).toInt(&ok, 16)) // trans message
-                     << QString::number(sl_buffer.at(4).toInt(&ok, 16)); // dac error number
-        QString s_chs_pwr = sl_buffer.at(1), s_chs_thk = sl_buffer.at(2);
-        for(int i = 1; i < 7; i++) {
-            QString s_ch_pwr_hex = s_chs_pwr.mid((i - 1) * 8, 8),
-                    s_ch_thx_hex = s_chs_thk.mid((i - 1) * 8, 8),
-                    s_ch_pwr_value = QString::number(DataCompute::hexStrToFloat(s_ch_pwr_hex)),
-                    s_ch_thk_value = QString::number(DataCompute::hexStrToFloat(s_ch_thx_hex));
-            sl_data_list << s_ch_pwr_value << s_ch_thk_value;
-        }
-        emit resultReady(sl_data_list);
     }
 }
 

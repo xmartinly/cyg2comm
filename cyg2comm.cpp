@@ -7,6 +7,7 @@ Cyg2Comm::Cyg2Comm(QWidget *parent) :
     ui->setupUi(this);
     database = QSqlDatabase::addDatabase("QPSQL");
     stat = new QLabel;
+    stat->setText("Cygnus2 Communication Test Platform v1.01");
     stat->setAlignment(Qt::AlignRight);
     statusBar()->addWidget(stat, 1);
     ui->startall_btn->setEnabled(false);
@@ -23,7 +24,7 @@ void Cyg2Comm::on_search_btn_clicked() {
     clearCygs();
     if(!database.isOpen()) {
         if(!connectDB()) {
-            stat->setText("Can't connect to Database");
+            statusBar()->showMessage("Can't connect to Database");
             return;
         }
     }
@@ -54,13 +55,14 @@ void Cyg2Comm::on_stopall_btn_clicked() {
 }
 
 void Cyg2Comm::receivResult(QStringList str_list) {
+//    qDebug() << str_list;
     if(database.isOpen()) {
         QSqlQuery sql_query;
         sql_query.prepare(insertString);
         for (int i = 0; i < str_list.size(); i++) {
             sql_query.addBindValue(str_list[i]);
         }
-        stat->setText(str_list.join("\t | "));
+        statusBar()->showMessage(str_list[2] + "\t" + str_list[0] + "  Received.");
         sql_query.exec();
     }
 }
@@ -83,7 +85,9 @@ void Cyg2Comm::disConnectDB() {
 }
 
 void Cyg2Comm::recivedIPInfo(QStringList datalist) {
+//    qDebug() << datalist;
     int row_count = ui->unit_tw->rowCount();
+    qDebug() << I_cygCount;
     bool b_isAccessAble = datalist.at(3).contains("Cygnus");
     ui->startall_btn->setEnabled(b_isAccessAble);
     QPushButton *btn_start = new QPushButton;
@@ -97,19 +101,22 @@ void Cyg2Comm::recivedIPInfo(QStringList datalist) {
     if(b_isAccessAble) {
         ui->unit_tw->setCellWidget(row_count, 4, btn_start);
         btn_start->setProperty("sn", datalist.at(0));
+        btn_start->setProperty("btn_index", row_count);
         btn_start->setProperty("ip", datalist.at(1));
         btn_start->setProperty("location", datalist.at(2));
         connect(btn_start, SIGNAL(clicked()), this, SLOT(getData()));
     } else {
         ui->unit_tw->setItem(row_count, 4, new QTableWidgetItem("Offline"));
     }
-//    if(database.isOpen()) {
-//        QSqlQuery updateQuery;
-//        updateQuery.prepare(updateString);
-//        updateQuery.addBindValue(datalist.at(6));
-//        updateQuery.addBindValue(datalist.at(0));
-//        updateQuery.exec();
-//    }
+    CygOpt opt;
+    opt.btn = btn_start;
+    opt.s_ip = datalist.at(1);
+    opt.s_sn = datalist.at(0);
+    opt.s_location = datalist.at(2);
+    opt.b_cygConnected = datalist.at(4).toInt();
+    opt.worker = new CygWorker(nullptr, datalist.at(1), datalist.at(0), datalist.at(2));
+    options.append(opt);
+    I_cygCount++;
 }
 
 void Cyg2Comm::initializeTable() {
@@ -135,25 +142,14 @@ void Cyg2Comm::initializeTable() {
 
 
 void Cyg2Comm::getData() {
+    ui->startall_btn->setEnabled(false);
     QPushButton *btn = dynamic_cast<QPushButton *>(sender());
-    CygOpt opt;
+    int btn_index = btn->property("btn_index").toInt();
+    CygOpt opt = options[btn_index];
     btn->setDisabled(true);
-    QString ip = btn->property("ip").toString(),
-            sn = btn->property("sn").toString(),
-            location = btn->property("location").toString();
-    int btn_index = btn->property("btn_index").toInt(),
-        i_options_current = options.count();
-    opt.btn = btn;
-    opt.s_ip = ip;
-    opt.s_sn = sn;
-    opt.s_location = location;
-    opt.i_btnIndex = btn_index;
-    opt.worker = new CygWorker(nullptr, ip, sn, location);
-    options.append(opt);
-    connect(options.at(i_options_current).worker, &QThread::finished, options.at(i_options_current).worker, &QObject::deleteLater);
-    connect(options.at(i_options_current).worker, &CygWorker::resultReady, this, &Cyg2Comm::receivResult);
-//    connect(options.at(i_options_current).worker, &CygWorker::resultReady, this, &Cyg2Comm::receivResult);
-    options.at(i_options_current).worker->start();
+    connect(options.at(btn_index).worker, &QThread::finished, options.at(btn_index).worker, &QObject::deleteLater);
+    connect(options.at(btn_index).worker, &CygWorker::resultReady, this, &Cyg2Comm::receivResult);
+    options.at(btn_index).worker->start();
 }
 
 void Cyg2Comm::clearCygs() {
@@ -166,9 +162,20 @@ void Cyg2Comm::clearCygs() {
         opt.btn->setEnabled(true);
     }
     options.clear();
+    ui->startall_btn->setEnabled(false);
+    I_cygCount = 0;
 }
 
 
 
 void Cyg2Comm::on_startall_btn_clicked() {
+    if(options.count() < 1) {
+        return;
+    }
+    foreach (CygOpt opt, options) {
+        if(opt.b_cygConnected) {
+            opt.btn->click();
+            Sleep(1000);
+        }
+    }
 }

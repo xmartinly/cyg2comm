@@ -18,6 +18,9 @@
 #include <QPushButton>
 #include <QLabel>
 
+#include <QApplication>
+#include <QEventLoop>
+
 #include "cyg_online.h"
 #include "cyg_worker.h"
 
@@ -66,6 +69,8 @@ private:
 
     QVector<CygOpt> options;
 
+    int I_cygCount = 0;
+
     QSqlDatabase database;
 
     QThreadPool pool;
@@ -75,6 +80,13 @@ private:
     QLabel *stat;
 
     QList<QPushButton> start_btns;
+
+    void Sleep(int msec) {
+        QTime dieTime = QTime::currentTime().addMSecs(msec);
+        while( QTime::currentTime() < dieTime ) {
+            QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+        }
+    }
 
     bool connectDB();
 
