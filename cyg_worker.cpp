@@ -1,24 +1,25 @@
-#include "cyg_worker.h"
+﻿#include "cyg_worker.h"
 
-CygWorker::CygWorker(QObject *parent, QString s_ip, QString s_sn) : QThread(parent)
-{
+CygWorker::CygWorker(QObject *parent, QString s_ip, QString s_sn, QString s_location) : QThread(parent) {
     cyg_ip = s_ip;
     cyg_sn  = s_sn;
+    cyg_location = s_location;
+//    b_stopAcquire = false;
     cmd[0] = '\x18';
     cmd[1] = '\x00';
     //message hello
     cmd[2] = '\x48';
     cmd[3] = '\x01';
-    //sensor1 activity SS51
+    //material pwr
     cmd[4] = '\x53';
-    cmd[5] = '\x53';
-    cmd[6] = '\x05';
-    cmd[7] = '\x01';
-    //sensor1 frequence SS41
+    cmd[5] = '\x4c';
+    cmd[6] = '\x03';
+    cmd[7] = '\x00';
+    //material thk
     cmd[8] = '\x53';
-    cmd[9] = '\x53';
+    cmd[9] = '\x4c';
     cmd[10] = '\x04';
-    cmd[11] = '\x01';
+    cmd[11] = '\x00';
     //trans msg SG9
     cmd[12] = '\x53';
     cmd[13] = '\x47';
@@ -36,11 +37,10 @@ CygWorker::CygWorker(QObject *parent, QString s_ip, QString s_sn) : QThread(pare
     cmd[24] = '\x00';
     cmd[25] = '\x00';
     //checksum
-    cmd[26] = '\xe6';
+    cmd[26] = '\xD4';
 }
 
-CygWorker::~CygWorker()
-{
+CygWorker::~CygWorker() {
     if(tfc_Socket->isOpen()) {
         tfc_Socket->abort();
     }
@@ -50,13 +50,11 @@ CygWorker::~CygWorker()
 
 
 
-void CygWorker::tfcAquireStop()
-{
+void CygWorker::tfcAquireStop() {
     b_stopAcquire = true;
 }
 
-void CygWorker::tfcAquireStart()
-{
+void CygWorker::tfcAquireStart() {
     if(b_stopAcquire && acquire_Timer->isActive()) {
         tfc_Socket->abort();
         acquire_Timer->stop();
@@ -74,8 +72,7 @@ void CygWorker::tfcAquireStart()
 }
 
 
-void CygWorker::run()
-{
+void CygWorker::run() {
     if(cyg_ip != "") {
         tfc_Socket = new QTcpSocket();
         tfc_Socket->connectToHost(cyg_ip, 2101, QIODevice::ReadWrite);
@@ -90,35 +87,39 @@ void CygWorker::run()
     exec();
 }
 
-void CygWorker::recData()
-{
-    int msgTrans, msgDAC;
-    bool ok = true;
-    QString dateTime = QDateTime::currentDateTime().toString("yyyy/MM/dd HH:mm:ss:z"), _msgTrans, _msgDAC;
-    QByteArray buffer, msgH1, msgACT, msgFreq;
-    QStringList dataList;
-    buffer = tfc_Socket->readAll();
-    QByteArray ba_reponse = buffer.mid(2, 43),  ba_checksum = buffer.mid(45, 1);
-    QString _ba_checksum = ba_checksum.toHex();
-    if(DataCompute::InficonTFCCheckSum(ba_reponse) == DataCompute::HexTodec(_ba_checksum.toLatin1().data())) {
-        msgH1 = buffer.mid(5, 22);
-        msgACT = buffer.mid(28, 4);
-        msgFreq = buffer.mid(33, 8);
-        msgTrans = buffer.mid(42, 1).toHex().toInt(&ok, 16);
-        msgDAC = buffer.mid(44, 1).toHex().toInt(&ok, 16);
-        _msgTrans = msgTrans == 0 ? "N/A" : errMsg::transMsg(msgTrans);
-        _msgDAC = msgDAC == 0 ? "N/A" : QString::number(msgDAC);
-        dataList << dateTime
-                 << cyg_sn
-                 << cyg_ip
-                 << QString(msgH1)
-                 << cyg_location
-                 << QString::number(DataCompute::ReadFreq(msgFreq), 'f', 3)
-                 << QString::number(DataCompute::ReadLong(msgACT))
-                 << _msgDAC
-                 << _msgTrans;
-        emit resultReady(dataList);
-        dataList.clear();
+void CygWorker::recData() {
+    bool b_read_ok = false;
+    QString s_buffer;
+    QByteArray buffer = tfc_Socket->readAll();
+    QStringList sl_buffer, sl_data_list;
+    if(buffer.size() == 82) {
+        b_read_ok = DataCompute::InficonTFCCheckSum(buffer.mid(2, 79)) == DataCompute::HexTodec(buffer.mid(81, 1).toHex().data());
+        if(b_read_ok) {
+            s_buffer = buffer.mid(4, 77).toHex();
+            sl_buffer = s_buffer.split("06");
+            sl_buffer.removeAll(QString(""));
+        }
+    } else {
+        return;
+    }
+    if(b_read_ok) {
+        bool ok;
+        sl_data_list << cyg_sn  // cygnus2 sn
+                     << cyg_ip  // cygnus2 IP
+                     << QDateTime::currentDateTime().toString("yyyy/MM/dd HH:mm:ss:z") // data time
+                     << QByteArray::fromHex(sl_buffer[0].toUtf8().data()).toStdString().c_str() // cygnus2 version
+                     << errMsg::transMsg(sl_buffer.at(3).toInt(&ok, 16)) // trans message
+                     << QString::number(sl_buffer.at(4).toInt(&ok, 16)); // dac error number
+        QString s_chs_pwr = sl_buffer.at(1), s_chs_thk = sl_buffer.at(2);
+        for(int i = 1; i < 7; i++) {
+            QString s_ch_pwr_hex = s_chs_pwr.mid((i - 1) * 8, 8),
+                    s_ch_thx_hex = s_chs_thk.mid((i - 1) * 8, 8),
+                    s_ch_pwr_value = QString::number(DataCompute::hexStrToFloat(s_ch_pwr_hex)),
+                    s_ch_thk_value = QString::number(DataCompute::hexStrToFloat(s_ch_thx_hex));
+            sl_data_list << s_ch_pwr_value << s_ch_thk_value;
+        }
+        emit resultReady(sl_data_list);
     }
 }
+
 

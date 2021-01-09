@@ -38,7 +38,7 @@ public:
     QSpacerItem *horizontalSpacer_5;
     QPushButton *search_btn;
     QSpacerItem *horizontalSpacer;
-    QPushButton *add_btn;
+    QPushButton *startall_btn;
     QSpacerItem *horizontalSpacer_3;
     QPushButton *stopall_btn;
     QSpacerItem *horizontalSpacer_2;
@@ -102,16 +102,16 @@ public:
 
         horizontalLayout->addItem(horizontalSpacer);
 
-        add_btn = new QPushButton(centralWidget);
-        add_btn->setObjectName(QString::fromUtf8("add_btn"));
-        add_btn->setMinimumSize(QSize(0, 30));
-        add_btn->setMaximumSize(QSize(75, 16777215));
+        startall_btn = new QPushButton(centralWidget);
+        startall_btn->setObjectName(QString::fromUtf8("startall_btn"));
+        startall_btn->setMinimumSize(QSize(0, 30));
+        startall_btn->setMaximumSize(QSize(75, 16777215));
         QIcon icon1;
         icon1.addFile(QString::fromUtf8(":/picture/add.png"), QSize(), QIcon::Normal, QIcon::Off);
-        add_btn->setIcon(icon1);
-        add_btn->setIconSize(QSize(55, 55));
+        startall_btn->setIcon(icon1);
+        startall_btn->setIconSize(QSize(55, 55));
 
-        horizontalLayout->addWidget(add_btn);
+        horizontalLayout->addWidget(startall_btn);
 
         horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
 
@@ -175,9 +175,9 @@ public:
 #endif // QT_NO_TOOLTIP
         search_btn->setText(QString());
 #ifndef QT_NO_TOOLTIP
-        add_btn->setToolTip(QApplication::translate("Cyg2Comm", "Add", nullptr));
+        startall_btn->setToolTip(QApplication::translate("Cyg2Comm", "Add", nullptr));
 #endif // QT_NO_TOOLTIP
-        add_btn->setText(QString());
+        startall_btn->setText(QString());
 #ifndef QT_NO_TOOLTIP
         stopall_btn->setToolTip(QApplication::translate("Cyg2Comm", "Stop All", nullptr));
 #endif // QT_NO_TOOLTIP

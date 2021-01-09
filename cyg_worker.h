@@ -1,4 +1,4 @@
-#ifndef CYGWORKER_H
+﻿#ifndef CYGWORKER_H
 #define CYGWORKER_H
 
 #include <QObject>
@@ -15,7 +15,7 @@ class CygWorker: public QThread
     Q_OBJECT
 
 public:
-    explicit CygWorker(QObject *parent = nullptr, QString s_ip = "", QString s_sn = "");
+    explicit CygWorker(QObject *parent = nullptr, QString s_ip = "", QString s_sn = "", QString s_location="");
 
     ~CygWorker() override;
 

@@ -1,13 +1,11 @@
-#include "errmsg.h"
+﻿#include "errmsg.h"
 
-errMsg::errMsg()
-{
-
+errMsg::errMsg() {
 }
 
-QString errMsg::transMsg(int code)
-{
+QString errMsg::transMsg(int code) {
     QMap<int, QString> transMsg;
+    transMsg[0] =  "N/A";
     transMsg[1] =  "1:Locks Cleared";
     transMsg[2] =  "2:Already Switching";
     transMsg[4] =  "4:Parameter Default";
@@ -52,5 +50,5 @@ QString errMsg::transMsg(int code)
     transMsg[63] = "63:No Switch: No XIU";
     transMsg[69] = "69:Power Loss";
     QString errCode  = transMsg[code];
-    return errCode.length() > 0 ? errCode : "N/A";
+    return errCode ;
 }

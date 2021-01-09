@@ -7,17 +7,16 @@
 #include <QTcpSocket>
 
 //注意！要使用信号，采用QObejct 和 QRunnable多继承，记得QObject要放在前面
-class CygOnline: public QObject, public QRunnable
-{
+class CygOnline: public QObject, public QRunnable {
     Q_OBJECT
 public:
-    CygOnline(QString s_ip, QString s_sn);
+    CygOnline(QString s_ip, QString s_sn, QString s_location);
 
 protected:
     void run() override;
 
 private:
-    QString s_cygIP, s_cygSN;
+    QString S_cygIP, S_cygSN, S_cygLocation;
 
 
 signals:

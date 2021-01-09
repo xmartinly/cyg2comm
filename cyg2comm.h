@@ -1,4 +1,4 @@
-#ifndef CYG2COMM_H
+﻿#ifndef CYG2COMM_H
 #define CYG2COMM_H
 
 #include <QMainWindow>
@@ -22,13 +22,11 @@
 #include "cyg_worker.h"
 
 
-namespace Ui
-{
+namespace Ui {
     class Cyg2Comm;
 }
 
-class Cyg2Comm : public QMainWindow
-{
+class Cyg2Comm : public QMainWindow {
     Q_OBJECT
 
 public:
@@ -36,29 +34,30 @@ public:
     ~Cyg2Comm();
 
     QString updateString = "UPDATE cygnus_list SET WHERE cyg_sn = :cyg_sn",
-            insertString = "INSERT INTO cygnus_comm (update_time, comm_sn, unit_ip, unit_version, unit_location, frequency, activity, dac_error, trans_msg) VALUES (?,?,?,?,?,?,?,?,?)",
+            insertString = "INSERT INTO cyg_data (cyg_sn, cyg_ip, update_time, cyg_version, cyg_trans_msg, cyg_dac_error, cyg_ch1_pwr,cyg_ch1_thk, cyg_ch2_pwr,cyg_ch2_thk, cyg_ch3_pwr,cyg_ch3_thk, cyg_ch4_pwr,cyg_ch4_thk, cyg_ch5_pwr,cyg_ch5_thk, cyg_ch6_pwr,cyg_ch6_thk) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             selectString = "SELECT * FROM cyg_list";
 
 public slots:
+
     void receivResult(QStringList strlist);
+
     void recivedIPInfo(QStringList ip_info);
 
 private slots:
     void on_search_btn_clicked();
-    void on_add_btn_clicked();
+
+    void on_startall_btn_clicked();
+
     void on_stopall_btn_clicked();
+
     void getData();
+
 
 private:
     Ui::Cyg2Comm *ui;
 
-    bool connectDB();
-    void disConnectDB();
-    void initializeTable();
-    void clearCygs();
-
     typedef struct CygOpts {
-        QPushButton * btn;
+        QPushButton *btn;
         int i_btnIndex;
         bool b_btnClicked = false, b_cygConnected = false;
         QString s_sn, s_ip, s_location;
@@ -70,13 +69,23 @@ private:
     QSqlDatabase database;
 
     QThreadPool pool;
+
     QThreadPool *global_pool = QThreadPool::globalInstance();
 
     QLabel *stat;
+
+    QList<QPushButton> start_btns;
+
+    bool connectDB();
+
+    void disConnectDB();
+
+    void initializeTable();
+
+    void clearCygs();
+
 protected:
 
-signals:
-    void stopWorker();
 };
 
 #endif // CYG2COMM_H

@@ -1,12 +1,10 @@
 ﻿#include "data_compute.h"
 
-DataCompute::DataCompute()
-{
+DataCompute::DataCompute() {
 }
 
 
-QByteArray DataCompute::XTC3Cmd(QString Str)
-{
+QByteArray DataCompute::XTC3Cmd(QString Str) {
     QByteArray _cmd;
     if(Str == "TOFF") {
         _cmd.resize(7);
@@ -178,8 +176,7 @@ QByteArray DataCompute::XTC3Cmd(QString Str)
     return _cmd;
 }
 
-QByteArray DataCompute::ReviseData(QByteArray Bytes)
-{
+QByteArray DataCompute::ReviseData(QByteArray Bytes) {
     QByteArray _Bytes;
     _Bytes.reserve(Bytes.length());
     for(int i = Bytes.length() - 1; i >= 0; --i) {
@@ -188,8 +185,7 @@ QByteArray DataCompute::ReviseData(QByteArray Bytes)
     return _Bytes;
 }
 
-double DataCompute::ReadFreq(QByteArray FreqBytes)
-{
+double DataCompute::ReadFreq(QByteArray FreqBytes) {
     bool ok;
     //double c = 0.0034924596;
     double c = 0.000873114913702011;
@@ -197,8 +193,7 @@ double DataCompute::ReadFreq(QByteArray FreqBytes)
     //return QString::number(_Bytes.toHex().toLongLong(&ok, 16) * c,'f',3);
     return _Bytes.toHex().toLongLong(&ok, 16) * c;
 }
-double DataCompute::ReadLong(QByteArray FreqBytes)
-{
+double DataCompute::ReadLong(QByteArray FreqBytes) {
     bool ok;
     //double c = 0.0034924596;
     QByteArray _Bytes = ReviseData(FreqBytes);
@@ -206,33 +201,29 @@ double DataCompute::ReadLong(QByteArray FreqBytes)
     return _Bytes.toHex().toLongLong(&ok, 16);
 }
 
-double DataCompute::ReadRate(QByteArray RateBytes)
-{
+double DataCompute::ReadRate(QByteArray RateBytes) {
     QByteArray _Bytes = ReviseData(RateBytes).toHex();
     return HexTofloat(_Bytes);
 }
 
-double DataCompute::ReadThk(QByteArray ThkBytes)
-{
+double DataCompute::ReadThk(QByteArray ThkBytes) {
     QString _Bytes = ReviseData(ThkBytes).toHex();
     return HexTofloat(_Bytes);
 }
 
-double DataCompute::ReadFloat(QByteArray DataBytes)
-{
+double DataCompute::ReadFloat(QByteArray DataBytes) {
     QString _Bytes = ReviseData(DataBytes).toHex();
     return HexTofloat(_Bytes);
 }
 
-int DataCompute::ReadInt(QByteArray ActBytes)
-{
+
+int DataCompute::ReadInt(QByteArray ActBytes) {
     bool ok;
     QByteArray _Bytes = ReviseData(ActBytes).toHex();
     return _Bytes.toInt(&ok, 16);
     //return QString::number(_Bytes.toInt(&ok, 16));
 }
-QString DataCompute::ICCYGState(QByteArray state_code)
-{
+QString DataCompute::ICCYGState(QByteArray state_code) {
     QString state = "N/A";
     QString state_char = state_code.toHex();
     switch (HexTodec(state_char.toLatin1().data())) {
@@ -303,8 +294,7 @@ QString DataCompute::ICCYGState(QByteArray state_code)
     return state;
 }
 
-QString DataCompute::XTC3State(QByteArray state_code)
-{
+QString DataCompute::XTC3State(QByteArray state_code) {
     QString state = "N/A";
     QString state_char = state_code.toHex();
     switch (HexTodec(state_char.toLatin1().data())) {
@@ -351,8 +341,7 @@ QString DataCompute::XTC3State(QByteArray state_code)
     return state;
 }
 
-QStringList DataCompute::MassPointsGen(QString mass_points_string)
-{
+QStringList DataCompute::MassPointsGen(QString mass_points_string) {
     QRegularExpression rx("(\\d+)");
     QList<int> list;
     QRegularExpressionMatchIterator i = rx.globalMatch(mass_points_string);
@@ -381,19 +370,17 @@ QStringList DataCompute::MassPointsGen(QString mass_points_string)
     return mass_point_list;
 }
 
-int DataCompute::InficonTFCCheckSum(QByteArray bytes)
-{
+int DataCompute::InficonTFCCheckSum(QByteArray bytes) {
     QString data = bytes.toHex();
-    int sum = 0;
-    for (int i  = 0; i < data.length() / 2; ++i) {
+    int sum = 0, i_length = data.length() / 2;
+    for (int i  = 0; i < i_length; ++i) {
         QString s_tmp = formatInput(data.mid(i * 2, 2));
         sum += HexTodec(s_tmp.toLatin1().data());
     }
     return sum % 256;
 }
 
-QString DataCompute::gaugeStatus(int status_code)
-{
+QString DataCompute::gaugeStatus(int status_code) {
     QString status_string;
     switch(status_code) {
         case 0:

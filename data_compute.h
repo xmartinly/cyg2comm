@@ -14,13 +14,11 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-class DataCompute
-{
+class DataCompute {
 public:
     DataCompute();
 
-    typedef struct InfiCMDs
-    {
+    typedef struct InfiCMDs {
         QList<int>  cmdRespLength;
         QList<int> respShow;  // -1 = show, no chart; 0 = hide; 1 = show,
         QByteArray  cmdByte;
@@ -29,14 +27,11 @@ public:
     } InfiCMD;
 
 
-    static QString byteStatus(QString bin_string)
-    {
+    static QString hbyteStatus(QString bin_string) {
         QString str = "";
         int i_bin_string = bin_string.length();
-        for (int i = 0; i < i_bin_string; i++)
-        {
-            if(bin_string.at(i) == "1")
-            {
+        for (int i = 0; i < i_bin_string; i++) {
+            if(bin_string.at(i) == "1") {
                 str += QString::number(i + 1) + "#";
             }
         }
@@ -44,19 +39,15 @@ public:
     }
 
 
-    static QString infCmdHuman(QString cmd, QString cmd_id)
-    {
+    static QString infCmdHuman(QString cmd, QString cmd_id) {
         //0=string, 1=int, 2=float,3=byte
         QString s_cmd_human;
         int i_cmd_id = cmd_id.toInt();
-        if(cmd == "H")
-        {
+        if(cmd == "H") {
             s_cmd_human = "Hello,string,-1";
         }
-        if(cmd == "SS")
-        {
-            switch (i_cmd_id)
-            {
+        if(cmd == "SS") {
+            switch (i_cmd_id) {
                 case 0:
                     s_cmd_human = "Crystal Life,byte,1";
                     break;
@@ -95,10 +86,8 @@ public:
                     break;
             }
         }
-        if(cmd == "SL")
-        {
-            switch (i_cmd_id)
-            {
+        if(cmd == "SL") {
+            switch (i_cmd_id) {
                 case 1:
                     s_cmd_human = "Filtered Rate,float,4";
                     break;
@@ -131,10 +120,8 @@ public:
                     break;
             }
         }
-        if(cmd == "SG")
-        {
-            switch (i_cmd_id)
-            {
+        if(cmd == "SG") {
+            switch (i_cmd_id) {
                 case 1:
                     s_cmd_human = "Active Process,int,4";
                     break;
@@ -167,13 +154,11 @@ public:
         return s_cmd_human;
     }
 
-    static QString formatInput(QString hexStr)
-    {
+    static QString formatInput(QString hexStr) {
         return hexStr.indexOf("0") == 0 ? hexStr.mid(1, 1) : hexStr;
     }
 
-    static QByteArray INFCtrlCMD(QByteArray cmd)
-    {
+    static QByteArray INFCtrlCMD(QByteArray cmd) {
         int i_cmd_len = cmd.length(), i_checksum = DataCompute::InficonTFCCheckSum(cmd);
         cmd.append(char(i_checksum));
         cmd.prepend(char(0));
@@ -185,58 +170,48 @@ public:
 
     static QString ICCmdToName(QString cmd);
 
-    static bool IsDigital(QString str)
-    {
+    static bool IsDigital(QString str) {
         return str.contains(QRegExp("^\\d+$"));
     }
 
-    static QByteArray intToByte(int number)
-    {
+    static QByteArray intToByte(int number) {
         QByteArray abyte0;
         abyte0.resize(1);
         abyte0[0] = char(0xff & number);
         return abyte0;
     }
 
-    static int infMsgLength(QByteArray leng_bytes)
-    {
+    static int infMsgLength(QByteArray leng_bytes) {
         QByteArray _length_bytes = ReviseData(leng_bytes);
         return HexTodec(_length_bytes.toHex().data());
     }
 
-    static QByteArray strToByte(QString _cmd)
-    {
+    static QByteArray strToByte(QString _cmd) {
         std::string strx = _cmd.toStdString();
-        const char* ch = strx.c_str();
+        const char *ch = strx.c_str();
         return ch;
     }
 
-    static double BinaryToDecimal(QString Bin)
-    {
+    static double BinaryToDecimal(QString Bin) {
         //QString str;
         int i;
         double Num = 0;
         int signal = 1;
-        if (Bin.at(0) == '1')
-        {
+        if (Bin.at(0) == '1') {
             signal = -1;
         }
         int exp = 0;
-        for (i = 1; i <= 8; i++)
-        {
+        for (i = 1; i <= 8; i++) {
             exp = exp * 2 + Bin.at(i).toLatin1() - 48;
         }
         //if (exp == 0) return QString('0');
-        if (exp == 0)
-        {
+        if (exp == 0) {
             return 0.0;
         }
         exp -= 127;
         Num = pow(2.0, exp);
-        for(i = 9; i < 32; i++)
-        {
-            if (Bin.at(i).toLatin1() - 48 != 0)
-            {
+        for(i = 9; i < 32; i++) {
+            if (Bin.at(i).toLatin1() - 48 != 0) {
                 Num += pow(2.0, exp - (i - 9 + 1));
             }
         }
@@ -245,19 +220,16 @@ public:
         return Num;
     }
 
-    static double HexTofloat(QString str)
-    {
+    static double HexTofloat(QString str) {
         str.replace(QRegExp("[\\s]+"), "");
-        if (str.contains("0x", Qt::CaseInsensitive))
-        {
+        if (str.contains("0x", Qt::CaseInsensitive)) {
             str.remove("0x", Qt::CaseInsensitive);
         }
         //double f;
         int Len = str.length();
         int i;
         QString m_Binary, m_Decimal;
-        for (i = 0; i < 8 - Len; i++)
-        {
+        for (i = 0; i < 8 - Len; i++) {
             str.insert(0, '0');
         }
         m_Binary = HexToBinary(str);
@@ -266,40 +238,29 @@ public:
         return BinaryToDecimal(m_Binary);
     }
 
-    static QString HexToBinary(QString Hex)
-    {
+    static QString HexToBinary(QString Hex) {
         QString str;
         int i;
-        for(i = 0; i < Hex.length(); i++)
-        {
+        for(i = 0; i < Hex.length(); i++) {
             char buf[5];
             memset(buf, 0, 5);
-            if (Hex.at(i).toLatin1() >= '0' && Hex.at(i).toLatin1() <= '9')
-            {
+            if (Hex.at(i).toLatin1() >= '0' && Hex.at(i).toLatin1() <= '9') {
                 _itoa_s(Hex.at(i).toLatin1() - 48, buf, 2);
-            }
-            else if (Hex.at(i).toLatin1() >= 'A' && Hex.at(i).toLatin1() <= 'Z')
-            {
+            } else if (Hex.at(i).toLatin1() >= 'A' && Hex.at(i).toLatin1() <= 'Z') {
                 _itoa_s(Hex.at(i).toLatin1() - 65 + 10, buf, 2);
-            }
-            else if (Hex.at(i).toLatin1() >= 'a' && Hex.at(i).toLatin1() <= 'z')
-            {
+            } else if (Hex.at(i).toLatin1() >= 'a' && Hex.at(i).toLatin1() <= 'z') {
                 _itoa_s(Hex.at(i).toLatin1() - 97 + 10, buf, 2);
             }
-            if (strlen(buf) == 0)
-            {
+            if (strlen(buf) == 0) {
                 str += "0000";
             }
-            if (strlen(buf) == 1)
-            {
+            if (strlen(buf) == 1) {
                 str += "000";
             }
-            if (strlen(buf) == 2)
-            {
+            if (strlen(buf) == 2) {
                 str += "00";
             }
-            if (strlen(buf) == 3)
-            {
+            if (strlen(buf) == 3) {
                 str += "0";
             }
             str += buf;
@@ -307,34 +268,40 @@ public:
         return str;
     }
 
-    static int HexTodec(char* s)
-    {
-        char* p = s;
-        if(*p == '\0')
-        {
+    static double hexStrToFloat(QString hex_str) {
+        QString s_hex_temp;
+        double d_value;
+        if(hex_str.length() != 8) {
+            d_value = 0.0;
+        }
+        for (int i = 4; i > 0; i--) {
+            s_hex_temp += hex_str.mid((i - 1) * 2, 2);
+        }
+        d_value = HexTofloat(s_hex_temp);
+        return  d_value;
+    }
+
+    static int HexTodec(char *s) {
+        char *p = s;
+        if(*p == '\0') {
             return 0;
         }
-        while (*p == '0')
-        {
+        while (*p == '0') {
             p++;
         }
         int dec = 0;
         char c;
-        while ((c = *p++))
-        {
+        while ((c = *p++)) {
             dec <<= 4;
-            if(c >= '0' && c <= '9')
-            {
+            if(c >= '0' && c <= '9') {
                 dec += c - '0';
                 continue;
             }
-            if(c >= 'a' && c <= 'f')
-            {
+            if(c >= 'a' && c <= 'f') {
                 dec += c - 'a' + 10;
                 continue;
             }
-            if(c >= 'A' && c <= 'F')
-            {
+            if(c >= 'A' && c <= 'F') {
                 dec += c - 'A' + 10;
                 continue;
             }
@@ -342,6 +309,7 @@ public:
         }
         return dec;
     }
+
 
     static double ReadFreq(QByteArray FreqBytes);
 
@@ -367,17 +335,14 @@ public:
 
     static int InficonTFCCheckSum(QByteArray bytes);
 
-    static InfiCMD ICCYGCmdGen(QString cmd_string)
-    {
+    static InfiCMD ICCYGCmdGen(QString cmd_string) {
         bool ok;
         cmd_string.append(";");
         QStringList ql_cmd_list = cmd_string.toUpper().split(";"), ql_cmd_human, ql_cmd_format;
         QList<int> l_resp_length;
         QByteArray ba_cmd_byte, s_cmd_temp;
-        foreach (QString s_single_cmd, ql_cmd_list)
-        {
-            if(s_single_cmd.count(",") == 2)
-            {
+        foreach (QString s_single_cmd, ql_cmd_list) {
+            if(s_single_cmd.count(",") == 2) {
                 s_single_cmd = s_single_cmd.replace(" ", "");
                 QStringList sl_single_cmd = s_single_cmd.split(","),
                             sl_cmd_human = infCmdHuman(sl_single_cmd.at(0), sl_single_cmd.at(1)).split(",");
