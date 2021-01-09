@@ -36,8 +36,7 @@ public:
     explicit Cyg2Comm(QWidget *parent = nullptr);
     ~Cyg2Comm();
 
-    QString updateString = "UPDATE cygnus_list SET WHERE cyg_sn = :cyg_sn",
-            insertString = "INSERT INTO cyg_data (cyg_sn, cyg_ip, update_time, cyg_version, cyg_trans_msg, cyg_dac_error, cyg_ch1_pwr,cyg_ch1_thk, cyg_ch2_pwr,cyg_ch2_thk, cyg_ch3_pwr,cyg_ch3_thk, cyg_ch4_pwr,cyg_ch4_thk, cyg_ch5_pwr,cyg_ch5_thk, cyg_ch6_pwr,cyg_ch6_thk) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    QString insertString = "INSERT INTO cyg_data (cyg_sn, cyg_ip, update_time, cyg_version, cyg_trans_msg, cyg_dac_error, cyg_ch1_pwr,cyg_ch1_thk, cyg_ch2_pwr,cyg_ch2_thk, cyg_ch3_pwr,cyg_ch3_thk, cyg_ch4_pwr,cyg_ch4_thk, cyg_ch5_pwr,cyg_ch5_thk, cyg_ch6_pwr,cyg_ch6_thk) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             selectString = "SELECT * FROM cyg_list";
 
 public slots:
@@ -78,8 +77,6 @@ private:
     QThreadPool *global_pool = QThreadPool::globalInstance();
 
     QLabel *stat;
-
-    QList<QPushButton> start_btns;
 
     void Sleep(int msec) {
         QTime dieTime = QTime::currentTime().addMSecs(msec);

@@ -7,9 +7,10 @@ Cyg2Comm::Cyg2Comm(QWidget *parent) :
     ui->setupUi(this);
     database = QSqlDatabase::addDatabase("QPSQL");
     stat = new QLabel;
-    stat->setText("Cygnus2 Communication Test Platform v1.01");
+    stat->setText("Cygnus2 Communication Test Platform v1.01   ");
     stat->setAlignment(Qt::AlignRight);
-    statusBar()->addWidget(stat, 1);
+    statusBar()->addPermanentWidget(stat);
+    statusBar()->setSizeGripEnabled(false);
     ui->startall_btn->setEnabled(false);
 }
 
@@ -20,42 +21,7 @@ Cyg2Comm::~Cyg2Comm() {
     delete ui;
 }
 
-void Cyg2Comm::on_search_btn_clicked() {
-    clearCygs();
-    if(!database.isOpen()) {
-        if(!connectDB()) {
-            statusBar()->showMessage("Can't connect to Database");
-            return;
-        }
-    }
-    if(ui->unit_tw->rowCount() > 0) {
-        ui->unit_tw->clearContents();
-        ui->unit_tw->setRowCount(0);
-    }
-    QSqlQuery selectQuery;
-    QStringList onlineCygs;
-    selectQuery.prepare(selectString);
-    if (selectQuery.exec()) {
-        initializeTable();
-        global_pool->setMaxThreadCount(QThread::idealThreadCount());
-        while (selectQuery.next()) {
-            CygOnline *finder = new CygOnline(
-                selectQuery.value(2).toString(),
-                selectQuery.value(1).toString(),
-                selectQuery.value(4).toString()
-            );
-            connect(finder, &CygOnline::sendResult, this, &Cyg2Comm::recivedIPInfo);
-            QThreadPool::globalInstance()->start(finder);
-        }
-    }
-}
-
-void Cyg2Comm::on_stopall_btn_clicked() {
-    clearCygs();
-}
-
 void Cyg2Comm::receivResult(QStringList str_list) {
-//    qDebug() << str_list;
     if(database.isOpen()) {
         QSqlQuery sql_query;
         sql_query.prepare(insertString);
@@ -85,9 +51,7 @@ void Cyg2Comm::disConnectDB() {
 }
 
 void Cyg2Comm::recivedIPInfo(QStringList datalist) {
-//    qDebug() << datalist;
     int row_count = ui->unit_tw->rowCount();
-    qDebug() << I_cygCount;
     bool b_isAccessAble = datalist.at(3).contains("Cygnus");
     ui->startall_btn->setEnabled(b_isAccessAble);
     QPushButton *btn_start = new QPushButton;
@@ -158,15 +122,47 @@ void Cyg2Comm::clearCygs() {
     }
     foreach (CygOpt opt, options) {
         opt.worker->tfcAquireStop();
-        stat->setText("");
-        opt.btn->setEnabled(true);
+        statusBar()->showMessage("All unit stopped.");
+        opt.btn->setEnabled(false);
     }
     options.clear();
     ui->startall_btn->setEnabled(false);
     I_cygCount = 0;
 }
 
+void Cyg2Comm::on_search_btn_clicked() {
+    clearCygs();
+    if(!database.isOpen()) {
+        if(!connectDB()) {
+            statusBar()->showMessage("Can't connect to Database");
+            return;
+        }
+    }
+    if(ui->unit_tw->rowCount() > 0) {
+        ui->unit_tw->clearContents();
+        ui->unit_tw->setRowCount(0);
+    }
+    QSqlQuery selectQuery;
+    QStringList onlineCygs;
+    selectQuery.prepare(selectString);
+    if (selectQuery.exec()) {
+        initializeTable();
+        global_pool->setMaxThreadCount(QThread::idealThreadCount());
+        while (selectQuery.next()) {
+            CygOnline *finder = new CygOnline(
+                selectQuery.value(2).toString(),
+                selectQuery.value(1).toString(),
+                selectQuery.value(3).toString()
+            );
+            connect(finder, &CygOnline::sendResult, this, &Cyg2Comm::recivedIPInfo);
+            QThreadPool::globalInstance()->start(finder);
+        }
+    }
+}
 
+void Cyg2Comm::on_stopall_btn_clicked() {
+    clearCygs();
+}
 
 void Cyg2Comm::on_startall_btn_clicked() {
     if(options.count() < 1) {

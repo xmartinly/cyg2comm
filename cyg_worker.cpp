@@ -79,7 +79,7 @@ void CygWorker::run() {
         if(tfc_Socket->waitForConnected(250)) {
             connect(tfc_Socket, SIGNAL(readyRead()), this, SLOT(recData()));
             acquire_Timer = new QTimer;
-            acquire_Timer->setInterval(5000);
+            acquire_Timer->setInterval(10000);
             connect(acquire_Timer, SIGNAL(timeout()), this, SLOT(tfcAquireStart()), Qt::DirectConnection);
             QTimer::singleShot(0, acquire_Timer, SLOT(start()));
         }
