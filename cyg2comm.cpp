@@ -22,6 +22,7 @@ Cyg2Comm::~Cyg2Comm() {
 }
 
 void Cyg2Comm::receivResult(QStringList str_list) {
+    qDebug() << str_list;
     if(database.isOpen()) {
         QSqlQuery sql_query;
         sql_query.prepare(insertString);
@@ -29,7 +30,9 @@ void Cyg2Comm::receivResult(QStringList str_list) {
             sql_query.addBindValue(str_list[i]);
         }
         statusBar()->showMessage(str_list[1] + "\t" + str_list[0] + "  Received.");
-        sql_query.exec();
+        if(!sql_query.exec()) {
+            qDebug() << sql_query.lastError().text();
+        }
     }
 }
 

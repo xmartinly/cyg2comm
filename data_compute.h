@@ -5,7 +5,9 @@
 #include <bitset>
 #include <iostream>
 #include <QTextStream>
-#include <QDebug>
+#include <iomanip>
+#include <sstream>
+
 #include <math.h>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
@@ -13,6 +15,8 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+
+#include <QDebug>
 
 class DataCompute {
 public:
@@ -266,6 +270,12 @@ public:
             str += buf;
         }
         return str;
+    }
+
+    static int hexStrToInt(QString hex_str) {
+        int x ;
+        sscanf_s(hex_str.toStdString().c_str(), "%x", &x);
+        return x;
     }
 
     static double hexStrToFloat(QString hex_str) {
