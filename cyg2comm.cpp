@@ -28,7 +28,7 @@ void Cyg2Comm::receivResult(QStringList str_list) {
         for (int i = 0; i < str_list.size(); i++) {
             sql_query.addBindValue(str_list[i]);
         }
-        statusBar()->showMessage(str_list[2] + "\t" + str_list[0] + "  Received.");
+        statusBar()->showMessage(str_list[1] + "\t" + str_list[0] + "  Received.");
         sql_query.exec();
     }
 }
