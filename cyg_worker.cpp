@@ -109,7 +109,7 @@ void CygWorker::recData() {
             sl_data_list << cyg_sn  // cygnus2 sn
                          << cyg_ip  // cygnus2 IP
                          << cyg_location // cygnus2 location
-                         << QDateTime::currentDateTime().toString("yyyy/MM/dd HH:mm:ss:z") // data time
+                         << QString::number(QDateTime::currentMSecsSinceEpoch()) // data time
                          << ba_version.toStdString().c_str() // cygnus2 version
                          << errMsg::transMsg(ba_trans.toInt(&ok, 16)) // trans message
                          << QString::number(ba_dac.toInt(&ok, 16)); // dac error number
