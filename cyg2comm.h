@@ -36,8 +36,8 @@ public:
     explicit Cyg2Comm(QWidget *parent = nullptr);
     ~Cyg2Comm();
 
-    QString insertString = "INSERT INTO cyg_data (cyg_sn, cyg_ip, update_time, cyg_version, cyg_trans_msg, cyg_dac_error, cyg_ch1_pwr,cyg_ch1_thk, cyg_ch2_pwr,cyg_ch2_thk, cyg_ch3_pwr,cyg_ch3_thk, cyg_ch4_pwr,cyg_ch4_thk, cyg_ch5_pwr,cyg_ch5_thk, cyg_ch6_pwr,cyg_ch6_thk) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-            selectString = "SELECT * FROM cyg_list";
+    QString insertString = "INSERT INTO cyg_data (cyg_sn, cyg_ip, cyg_location, update_time, cyg_version, cyg_trans_msg, cyg_dac_error, cyg_ch1_pwr,cyg_ch1_thk, cyg_ch2_pwr,cyg_ch2_thk, cyg_ch3_pwr,cyg_ch3_thk, cyg_ch4_pwr,cyg_ch4_thk, cyg_ch5_pwr,cyg_ch5_thk, cyg_ch6_pwr,cyg_ch6_thk) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            selectString = "SELECT * FROM cyg_list WHERE cyg_online = 1";
 
 public slots:
 

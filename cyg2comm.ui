@@ -142,7 +142,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Add</string>
+         <string>Start All</string>
         </property>
         <property name="text">
          <string/>

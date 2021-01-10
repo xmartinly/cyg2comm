@@ -150,9 +150,9 @@ void Cyg2Comm::on_search_btn_clicked() {
         global_pool->setMaxThreadCount(QThread::idealThreadCount());
         while (selectQuery.next()) {
             CygOnline *finder = new CygOnline(
-                selectQuery.value(2).toString(),
-                selectQuery.value(1).toString(),
-                selectQuery.value(3).toString()
+                selectQuery.value("cyg_ip").toString(),
+                selectQuery.value("cyg_sn").toString(),
+                selectQuery.value("cyg_location").toString()
             );
             connect(finder, &CygOnline::sendResult, this, &Cyg2Comm::recivedIPInfo);
             QThreadPool::globalInstance()->start(finder);
@@ -171,7 +171,7 @@ void Cyg2Comm::on_startall_btn_clicked() {
     foreach (CygOpt opt, options) {
         if(opt.b_cygConnected) {
             opt.btn->click();
-            Sleep(1000);
+            Sleep(1500);
         }
     }
 }

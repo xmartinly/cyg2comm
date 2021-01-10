@@ -175,7 +175,7 @@ public:
 #endif // QT_NO_TOOLTIP
         search_btn->setText(QString());
 #ifndef QT_NO_TOOLTIP
-        startall_btn->setToolTip(QApplication::translate("Cyg2Comm", "Add", nullptr));
+        startall_btn->setToolTip(QApplication::translate("Cyg2Comm", "Start All", nullptr));
 #endif // QT_NO_TOOLTIP
         startall_btn->setText(QString());
 #ifndef QT_NO_TOOLTIP
