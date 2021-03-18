@@ -28,7 +28,7 @@ void CygOnline::run() {
     }
     ip_info = QString(buffer.mid(5, 22));
     if(ip_info.length() < 10) {
-        ip_info = "Other In Control";
+        ip_info = "N/A";
     }
     buffer.clear();
     if(tfc_socket->isOpen()) {

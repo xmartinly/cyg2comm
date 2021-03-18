@@ -161,13 +161,14 @@ void CygWorker::recData() {
         s_chs_thk = sl_resp.at(2);
         s_trans = sl_resp.at(3);
         s_dac = sl_resp.at(4);
+        int i_dac = DataCompute::hexStrToInt(s_dac.right(2));
         sl_data_list << cyg_sn  // cygnus2 sn
                      << cyg_ip  // cygnus2 IP
                      << cyg_location // cygnus2 location
                      << QString::number(QDateTime::currentMSecsSinceEpoch()) // data time
                      << s_version // cygnus2 version
                      << errMsg::transMsg(DataCompute::hexStrToInt(s_trans)) // trans message
-                     << QString::number(DataCompute::hexStrToInt(s_dac.right(2))); // dac error number
+                     << (i_dac > 0 ? "DAC Error " + QString::number(i_dac) : "N/A"); // dac error number
         for(int i = 1; i < 7; i++) {
             QString s_ch_pwr_hex = s_chs_pwr.mid((i - 1) * 8, 8),
                     s_ch_thx_hex = s_chs_thk.mid((i - 1) * 8, 8),

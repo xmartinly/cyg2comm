@@ -38,6 +38,8 @@ public:
     QSpacerItem *horizontalSpacer_5;
     QPushButton *search_btn;
     QSpacerItem *horizontalSpacer;
+    QPushButton *config_btn;
+    QSpacerItem *horizontalSpacer_6;
     QPushButton *startall_btn;
     QSpacerItem *horizontalSpacer_3;
     QPushButton *stopall_btn;
@@ -102,13 +104,28 @@ public:
 
         horizontalLayout->addItem(horizontalSpacer);
 
+        config_btn = new QPushButton(centralWidget);
+        config_btn->setObjectName(QString::fromUtf8("config_btn"));
+        config_btn->setMinimumSize(QSize(0, 30));
+        config_btn->setMaximumSize(QSize(75, 16777215));
+        QIcon icon1;
+        icon1.addFile(QString::fromUtf8(":/picture/rga_online.png"), QSize(), QIcon::Normal, QIcon::Off);
+        config_btn->setIcon(icon1);
+        config_btn->setIconSize(QSize(55, 55));
+
+        horizontalLayout->addWidget(config_btn);
+
+        horizontalSpacer_6 = new QSpacerItem(40, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
+
+        horizontalLayout->addItem(horizontalSpacer_6);
+
         startall_btn = new QPushButton(centralWidget);
         startall_btn->setObjectName(QString::fromUtf8("startall_btn"));
         startall_btn->setMinimumSize(QSize(0, 30));
         startall_btn->setMaximumSize(QSize(75, 16777215));
-        QIcon icon1;
-        icon1.addFile(QString::fromUtf8(":/picture/add.png"), QSize(), QIcon::Normal, QIcon::Off);
-        startall_btn->setIcon(icon1);
+        QIcon icon2;
+        icon2.addFile(QString::fromUtf8(":/picture/add.png"), QSize(), QIcon::Normal, QIcon::Off);
+        startall_btn->setIcon(icon2);
         startall_btn->setIconSize(QSize(55, 55));
 
         horizontalLayout->addWidget(startall_btn);
@@ -126,9 +143,9 @@ public:
         stopall_btn->setSizePolicy(sizePolicy1);
         stopall_btn->setMinimumSize(QSize(0, 30));
         stopall_btn->setMaximumSize(QSize(75, 16777215));
-        QIcon icon2;
-        icon2.addFile(QString::fromUtf8(":/picture/stopall.png"), QSize(), QIcon::Normal, QIcon::Off);
-        stopall_btn->setIcon(icon2);
+        QIcon icon3;
+        icon3.addFile(QString::fromUtf8(":/picture/stopall.png"), QSize(), QIcon::Normal, QIcon::Off);
+        stopall_btn->setIcon(icon3);
         stopall_btn->setIconSize(QSize(55, 55));
 
         horizontalLayout->addWidget(stopall_btn);
@@ -174,6 +191,7 @@ public:
         search_btn->setToolTip(QApplication::translate("Cyg2Comm", "Search", nullptr));
 #endif // QT_NO_TOOLTIP
         search_btn->setText(QString());
+        config_btn->setText(QString());
 #ifndef QT_NO_TOOLTIP
         startall_btn->setToolTip(QApplication::translate("Cyg2Comm", "Start All", nullptr));
 #endif // QT_NO_TOOLTIP

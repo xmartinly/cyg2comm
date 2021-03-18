@@ -30,17 +30,20 @@ SOURCES += \
     cyg_online.cpp \
     data_compute.cpp \
     cyg_worker.cpp \
-    errmsg.cpp
+    errmsg.cpp \
+    cygcomm_conf.cpp
 
 HEADERS += \
         cyg2comm.h \
     cyg_online.h \
     cyg_worker.h \
     data_compute.h \
-    errmsg.h
+    errmsg.h \
+    cygcomm_conf.h
 
 FORMS += \
-        cyg2comm.ui
+        cyg2comm.ui \
+    cygcomm_conf.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

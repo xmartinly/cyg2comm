@@ -7,7 +7,7 @@ Cyg2Comm::Cyg2Comm(QWidget *parent) :
     ui->setupUi(this);
     database = QSqlDatabase::addDatabase("QPSQL");
     stat = new QLabel;
-    stat->setText("Cygnus2 Communication Test Platform v1.01   ");
+    stat->setText("Cygnus2 Communication Test Platform v1.0.1   ");
     stat->setAlignment(Qt::AlignRight);
     statusBar()->addPermanentWidget(stat);
     statusBar()->setSizeGripEnabled(false);
@@ -22,7 +22,6 @@ Cyg2Comm::~Cyg2Comm() {
 }
 
 void Cyg2Comm::receivResult(QStringList str_list) {
-    qDebug() << str_list;
     if(database.isOpen()) {
         QSqlQuery sql_query;
         sql_query.prepare(insertString);
@@ -61,19 +60,20 @@ void Cyg2Comm::recivedIPInfo(QStringList datalist) {
     btn_start->setIcon(QIcon(":/picture/start.png"));
     btn_start->setIconSize(QSize(20, 20));
     ui->unit_tw->insertRow(row_count);
-    ui->unit_tw->setItem(row_count, 0, new QTableWidgetItem(datalist.at(0)));
-    ui->unit_tw->setItem(row_count, 1, new QTableWidgetItem(datalist.at(1)));
-    ui->unit_tw->setItem(row_count, 2, new QTableWidgetItem(datalist.at(2)));
-    ui->unit_tw->setItem(row_count, 3, new QTableWidgetItem(datalist.at(3)));
+    ui->unit_tw->setItem(row_count, 0, new QTableWidgetItem(QString::number(row_count + 1 )));
+    ui->unit_tw->setItem(row_count, 1, new QTableWidgetItem(datalist.at(0)));
+    ui->unit_tw->setItem(row_count, 2, new QTableWidgetItem(datalist.at(1)));
+    ui->unit_tw->setItem(row_count, 3, new QTableWidgetItem(datalist.at(2)));
+    ui->unit_tw->setItem(row_count, 4, new QTableWidgetItem(datalist.at(3)));
     if(b_isAccessAble) {
-        ui->unit_tw->setCellWidget(row_count, 4, btn_start);
+        ui->unit_tw->setCellWidget(row_count, 5, btn_start);
         btn_start->setProperty("sn", datalist.at(0));
         btn_start->setProperty("btn_index", row_count);
         btn_start->setProperty("ip", datalist.at(1));
         btn_start->setProperty("location", datalist.at(2));
         connect(btn_start, SIGNAL(clicked()), this, SLOT(getData()));
     } else {
-        ui->unit_tw->setItem(row_count, 4, new QTableWidgetItem("Offline"));
+        ui->unit_tw->setItem(row_count, 5, new QTableWidgetItem("Offline"));
     }
     CygOpt opt;
     opt.btn = btn_start;
@@ -88,23 +88,25 @@ void Cyg2Comm::recivedIPInfo(QStringList datalist) {
 
 void Cyg2Comm::initializeTable() {
     // initialize table widget
-    ui->unit_tw->setColumnCount(5);
+    ui->unit_tw->setColumnCount(6);
     QFont font("Courier New", 20, QFont::Bold);
     QStringList tblHeader;
-    tblHeader << tr("SN") << tr("IP") << tr("Location") << tr("Info") << ("Opt");
+    tblHeader << tr("Item") << tr("SN") << tr("IP") << tr("Location") << tr("Info") << ("Opt");
     ui->unit_tw->setHorizontalHeaderLabels(tblHeader);
     ui->unit_tw->verticalHeader()->setVisible(false);
     ui->unit_tw->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->unit_tw->model()->setHeaderData(0, Qt::Horizontal, QFont("Courier New", 14, QFont::Bold), Qt::FontRole);
     ui->unit_tw->model()->setHeaderData(1, Qt::Horizontal, QFont("Courier New", 14, QFont::Bold), Qt::FontRole);
     ui->unit_tw->model()->setHeaderData(2, Qt::Horizontal, QFont("Courier New", 14, QFont::Bold), Qt::FontRole);
-    ui->unit_tw->model()->setHeaderData(2, Qt::Horizontal, QFont("Courier New", 14, QFont::Bold), Qt::FontRole);
     ui->unit_tw->model()->setHeaderData(3, Qt::Horizontal, QFont("Courier New", 14, QFont::Bold), Qt::FontRole);
+    ui->unit_tw->model()->setHeaderData(4, Qt::Horizontal, QFont("Courier New", 14, QFont::Bold), Qt::FontRole);
+    ui->unit_tw->model()->setHeaderData(5, Qt::Horizontal, QFont("Courier New", 14, QFont::Bold), Qt::FontRole);
     ui->unit_tw->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     ui->unit_tw->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
     ui->unit_tw->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-    ui->unit_tw->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
-    ui->unit_tw->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    ui->unit_tw->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    ui->unit_tw->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
+    ui->unit_tw->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
 }
 
 
@@ -177,4 +179,9 @@ void Cyg2Comm::on_startall_btn_clicked() {
             Sleep(1500);
         }
     }
+}
+
+void Cyg2Comm::on_config_btn_clicked()
+{
+
 }

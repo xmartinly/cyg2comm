@@ -55,6 +55,8 @@ private slots:
     void getData();
 
 
+    void on_config_btn_clicked();
+
 private:
     Ui::Cyg2Comm *ui;
 
